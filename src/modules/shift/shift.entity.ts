@@ -40,4 +40,7 @@ export class Shift {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column()
+  canceled: boolean;
 }

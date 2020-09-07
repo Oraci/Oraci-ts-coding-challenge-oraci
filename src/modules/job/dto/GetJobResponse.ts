@@ -1,22 +1,19 @@
-export class GetShiftResponse {
+export class GetJobResponse {
   id: string;
-  talentId: string;
-  jobId: string;
+  companyId: string;
   start: Date;
   end: Date;
   canceled: boolean;
 
   constructor(
     id: string,
-    talentId: string,
-    jobId: string,
+    companyId: string,
     start: Date,
     end: Date,
     canceled: boolean,
   ) {
     this.id = id;
-    this.talentId = talentId;
-    this.jobId = jobId;
+    this.companyId = companyId;
     this.start = start;
     this.end = end;
     this.canceled = canceled;

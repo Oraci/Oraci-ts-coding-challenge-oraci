@@ -1,12 +1,12 @@
 import {
   Controller,
-  Post,
   Body,
   Get,
   Param,
   Patch,
   HttpCode,
   ParseUUIDPipe,
+  UseFilters,
 } from '@nestjs/common';
 import { ResponseDto } from '../../utils/ResponseDto';
 import { GetShiftsResponse } from './dto/GetShiftsResponse';
@@ -14,6 +14,7 @@ import { GetShiftResponse } from './dto/GetShiftResponse';
 import { ShiftService } from './shift.service';
 import { ValidationPipe } from '../ValidationPipe';
 import { BookTalentRequest } from './dto/BookTalentRequest';
+import { HttpExceptionFilter } from '../filters/http-exception.filter';
 
 @Controller('shift')
 export class ShiftController {
@@ -33,6 +34,7 @@ export class ShiftController {
             shift.jobId,
             shift.startTime,
             shift.endTime,
+            shift.canceled,
           );
         }),
       ),
@@ -41,10 +43,20 @@ export class ShiftController {
 
   @Patch(':shiftId/book')
   @HttpCode(204)
+  @UseFilters(HttpExceptionFilter)
   async bookTalent(
     @Param('shiftId', new ParseUUIDPipe()) shiftId: string,
     @Body(new ValidationPipe<BookTalentRequest>()) dto: BookTalentRequest,
   ): Promise<void> {
-    this.shiftService.bookTalent(shiftId, dto.talent);
+    return this.shiftService.bookTalent(dto.talent, shiftId);
+  }
+
+  @Patch(':shiftId/cancel')
+  @HttpCode(204)
+  @UseFilters(HttpExceptionFilter)
+  async cancelShift(
+    @Param('shiftId', new ParseUUIDPipe()) shiftId: string,
+  ): Promise<void> {
+    return this.shiftService.cancelShift(shiftId);
   }
 }

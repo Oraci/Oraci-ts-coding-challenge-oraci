@@ -40,4 +40,7 @@ export class Job {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column()
+  canceled: boolean;
 }

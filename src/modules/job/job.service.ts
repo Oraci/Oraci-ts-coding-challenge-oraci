@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as UUIDv4 } from 'uuid';
 import { eachDayOfInterval } from 'date-fns';
@@ -21,6 +21,7 @@ export class JobService {
     job.companyId = UUIDv4();
     job.startTime = date1;
     job.endTime = date2;
+    job.canceled = false;
 
     job.shifts = eachDayOfInterval({ start: date1, end: date2 }).map(day => {
       const startTime = new Date(day);
@@ -32,6 +33,7 @@ export class JobService {
       shift.job = job;
       shift.startTime = startTime;
       shift.endTime = endTime;
+      shift.canceled = false;
       return shift;
     });
 
@@ -40,5 +42,28 @@ export class JobService {
 
   public async getJobs(): Promise<Job[]> {
     return this.jobRepository.find();
+  }
+
+  public async cancelJob(jobId: string): Promise<void> {
+    const job = await this.jobRepository.findOne({
+      where: { id: jobId },
+      relations: ['shifts'],
+    });
+
+    if (!job) {
+      throw new HttpException('Job not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (job.canceled) {
+      throw new HttpException('Job is already canceled', HttpStatus.NOT_FOUND);
+    }
+
+    job.canceled = true;
+
+    job.shifts.forEach(shift => {
+      shift.canceled = true;
+    });
+
+    this.jobRepository.save(job);
   }
 }
