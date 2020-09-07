@@ -20,6 +20,11 @@ There are certain boundary conditions defined which __must__ be met by the servi
 * we do not want __talents__ to work less than 2 hours a __shift__ so they make enough money on a single __shift__
 * __talents__ are legally not allowed to work consecutive __shifts__ meaning there has to be at least a 6 hours break between __shifts__ for the same __talent__
 
+<em>Comments: 
+  <ul>
+    <li>Here I suppose that every shift has an interval of 8 to 17, so, in accordance with the conditions, I added a check in the <strong>bookTalent</strong> that does not allow the talent to schedule 2 consecutive shifts, the other conditions are already correct, considering this interval of the shift.</li>
+</em>
+
 ## Your job
 is to extend the existing service so it satisfies the requirements as following:
 
@@ -28,6 +33,29 @@ is to extend the existing service so it satisfies the requirements as following:
 I want to be able to cancel a job I ordered previously
 **AND** if the job gets cancelled all shifts get cancelled as well
 
+<em>Comments: 
+  <ul>
+    <li>Added <strong>canceled</strong> column in the <strong>job_process</strong> table, to control whether the job is canceled or not, thus maintaining the history of the records, without the need to delete them.</li>
+    <li>Created an endpoint to cancel a job, through jobId, all shifts will be canceled as well. Added some validations to allow this action.</li>
+    <li>Created an endpoint to return existing jobs.</li>
+  </ul>
+</em>
+
 ### Stretch goal
 **AS** a Company
 I want to be able to cancel a single shift of a job I ordered previously
+
+<em>Comments: 
+  <ul>
+    <li>Added <strong>canceled</strong> column in the <strong>shift</strong> table, to control whether the shift is canceled or not, thus maintaining the history of the records, without the need to delete them.</li>
+    <li>Created an endpoint to cancel a single shift of a job, through shiftId. Added some validations to allow this action.</li>
+  </ul>
+</em>
+
+<em>General comments: 
+  <ul>
+    <li>Added error handling</li>
+    <li>Created some unit tests</li>
+    <li>Added database in project to help testing</li>
+  </ul>
+</em>
